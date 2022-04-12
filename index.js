@@ -15,7 +15,7 @@ var restaurants = [
         price: 27,
       },
       {
-        name: "Roasted Broccily ",
+        name: "Roasted Broccoli",
         price: 11,
       },
     ],
@@ -92,20 +92,29 @@ type Mutation{
 // The root provides a resolver function for each API endpoint
 
 var root = {
-  restaurant: (arg) => {
-    // Your code goes here
-  },
-  restaurants: () => {
-    // Your code goes here
-  },
+  restaurant: (arg)=> restaurants[arg.id],
+  restaurants: () => restaurants,
   setrestaurant: ({ input }) => {
-    // Your code goes here
-  },
-  deleterestaurant: ({ id }) => {
-    // Your code goes here
+    restaurants.push({name: input.name, description: input.description
+  });
+  return input;
+},
+  deleteRestaurant: ({ id })=> {
+    const ok = Boolean(restaurants[id])
+    let deletedrestaurant = restaurants[id];
+    restaurants = restaurants.filter((item) => item.id !== id);
+    console.log(JSON.stringify(deletedrestaurant));
+    return {ok};
   },
   editrestaurant: ({ id, ...restaurant }) => {
-    // Your code goes here
+    if (!restaurants[id]) {
+      throw new Error("restaurant doesn't exist");
+  }
+  restaurants[id] = {
+    ...restaurants[id],
+    ...restaurant,
+  };
+  return restaurants[id];
   },
 };
 var app = express();
@@ -120,4 +129,4 @@ app.use(
 var port = 5500;
 app.listen(5500, () => console.log("Running Graphql on Port:" + port));
 
-export default root;
+// export default root;
